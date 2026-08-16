@@ -32,7 +32,7 @@ spec:
 
       containers:
         - name: damara-fe
-          image: ghcr.io/the-robinsons/damara-fe:39194bf824df8064b7c754d766c4bb7e4e2822f5
+          image: ghcr.io/the-robinsons/damara-fe:ababbf7f00dd0c7b4a1373c4f2261f245bc0fe53
           imagePullPolicy: IfNotPresent
 
           ports:
