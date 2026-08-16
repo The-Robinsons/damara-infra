@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: damara-runtime
+  namespace: damara
+imagePullSecrets:
+  - name: ghcr-credentials

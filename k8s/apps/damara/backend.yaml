@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: damara-be
+  namespace: damara
+  labels:
+    app: damara-be
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: damara-be
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+
+  template:
+    metadata:
+      labels:
+        app: damara-be
+
+    spec:
+      serviceAccountName: damara-runtime
+
+      imagePullSecrets:
+        - name: ghcr-credentials
+
+      containers:
+        - name: damara-be
+          image: ghcr.io/the-robinsons/damara-be:4f275cc97895649b797d486c9e0832f6944cd5bb
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+
+          envFrom:
+            - secretRef:
+                name: damara-be-env
+
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 24
+
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 768Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: damara-be
+  namespace: damara
+  labels:
+    app: damara-be
+
+spec:
+  type: ClusterIP
+
+  selector:
+    app: damara-be
+
+  ports:
+    - name: http
+      port: 3000
+      targetPort: http
+      protocol: TCP

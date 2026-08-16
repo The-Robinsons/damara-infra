@@ -1,0 +1,16 @@
+apiVersion: gateway.nginx.org/v1alpha2
+kind: NginxProxy
+metadata:
+  name: damara-proxy
+  namespace: damara
+
+spec:
+  ipFamily: ipv4
+
+  kubernetes:
+    deployment:
+      replicas: 2
+
+    service:
+      type: LoadBalancer
+      loadBalancerIP: "172.21.110.240"
